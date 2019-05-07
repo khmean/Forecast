@@ -18,12 +18,12 @@ class City:
         self.name = name
         self.temps = temperatures
 
-    """ Get the temperature for the day for the cities"""
-
     def get_temperature(self, day):
+        """ Get the temperature for the day for the cities"""
         return self.temps[day]
 
     def __str__(self):
+        """Return the name of the class and space in the memory"""
         return self.name
 
 
@@ -36,8 +36,8 @@ class Route:
 
     def avg_temp(self):
         temp = 0
-        for j in range(len(self.cities)):
-            temp += self.cities[j].get_temperature(j)
+        for k in range(len(self.cities)):
+            temp += self.cities[k].get_temperature(k)
         temp /= len(self.cities)
         print(temp)
         return temp
@@ -72,25 +72,36 @@ def fetch_weather(id):
     except:
         print("It appears there is no connection to get information needed.")
 
+
 if __name__ == "__main__":
 
-    try:
-        id_list = json.loads(open("cities.json").read())
-        cities = []
-        for id in id_list:
-            cities.append(fetch_weather(id))
-            avg_temp = 0
+    # try:
+    id_list = json.loads(open("cities.json").read())
+    cities = []
+    for id in id_list:
+        cities.append(fetch_weather(id))
+        avg_temp = 0
 
-        for i in range(len(cities)):
-            city = cities[i]
-            print(city, ": " + str(city.get_temperature(i)))
-            avg_temp += city.get_temperature(i)
+    for c in range(len(cities)):
+    #get the sum of the highest temp and devide by days
+        city = cities[c]
+        print(city, ": " + str(city.get_temperature(c)))
+        avg_temp += city.get_temperature(c)
 
-        avg_temp /= len(cities)
-        print(avg_temp)
+    avg_temp /= len(cities)
 
-        p = list(permutations(range(len(cities))))
-        print(p)
+    
+    print(avg_temp)
 
-    except:
-        print("File is not available.")
+
+    #print(cities[0], cities[1], cities[2], cities[3], cities[4])
+    #for cp in range(len(cities)):
+    #listcities = cities[cp].name
+    cities_list = [cities[0].name, cities[1].name, cities[2].name, cities[3].name, cities[4].name]
+    cities_temp_list = [cities[0]]
+    p = list(permutations(list(cities_list)))
+    print(p)
+# Route(p)
+
+# except:
+# print("File is not available.")
