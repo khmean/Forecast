@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         # Set the list of cities to use for the permutations method of the itertools
         cities_list = [cities[0], cities[1], cities[2], cities[3], cities[4]]
-        p = list(permutations(list(cities_list)))
+        p = list(permutations(cities_list))
         plist_Routes = []
         min_avg_temp = 200
         min_perm_index = 0
