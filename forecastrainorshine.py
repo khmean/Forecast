@@ -23,7 +23,7 @@ class City:
         return self.temps[day]
 
     def __str__(self):
-        """Return the name of the class and space in the memory"""
+        """ Return the name of the class and space in the memory"""
         return self.name
 
 
@@ -35,16 +35,19 @@ class Route:
         self.cities = city_list
 
     def avg_temp(self):
+        """ Return the lowest average temperature for the route"""
         temp = 0
         for k in range(len(self.cities)):
             temp += self.cities[k].get_temperature(k)
         temp /= len(self.cities)
-        print(temp)
         return temp
 
     def __str__(self):
-        # todo maybe use old join to create string containing the route city 1 : city 2 :
-        pass
+        """ Return the list of cities from the route"""
+        city_print = []
+        for m in range(len(self.cities)):
+            city_print.append(self.cities[m])
+        return ':'.join(map(str, city_print))
 
 
 def fetch_weather(id):
@@ -55,7 +58,7 @@ def fetch_weather(id):
     request_url = WS_URL + query_string
     print("Request URL: ", request_url)
     response = requests.get(request_url)
-    # todo try except
+    # check for a internet connection the to API
     try:
         if response.status_code == 200:
             d = response.json()
@@ -72,36 +75,37 @@ def fetch_weather(id):
     except:
         print("It appears there is no connection to get information needed.")
 
-
 if __name__ == "__main__":
 
-    # try:
-    id_list = json.loads(open("cities.json").read())
-    cities = []
-    for id in id_list:
-        cities.append(fetch_weather(id))
-        avg_temp = 0
+    try:
+        # Open the cities file and load a list of cities from the provided cities id
+        id_list = json.loads(open("cities.json").read())
+        cities = []
+        for id in id_list:
+            cities.append(fetch_weather(id))
+            avg_temp = 0
 
-    for c in range(len(cities)):
-    #get the sum of the highest temp and devide by days
-        city = cities[c]
-        print(city, ": " + str(city.get_temperature(c)))
-        avg_temp += city.get_temperature(c)
+        # Set the list of cities to use for the permutations method of the itertools
+        cities_list = [cities[0], cities[1], cities[2], cities[3], cities[4]]
+        p = list(permutations(list(cities_list)))
+        plist_Routes = []
+        min_avg_temp = 200
+        min_perm_index = 0
 
-    avg_temp /= len(cities)
+        # Loop through the list of permutations to send to the Route class
+        for perm_index in range(len(p)):
+            p_cities = p[perm_index]
+            plist_Routes.append(Route(p_cities))
 
-    
-    print(avg_temp)
+            # Set the lowest average high when found in the permutation list
+            if plist_Routes[perm_index].avg_temp() < min_avg_temp:
+                min_perm_index = perm_index
 
+        # Print the results of the route and temperature with the lowest average high temp
+        print("The lowest average temperature high of {:.2f} ".format(
+            plist_Routes[min_perm_index].avg_temp()) + "is forecast for this route:")
 
-    #print(cities[0], cities[1], cities[2], cities[3], cities[4])
-    #for cp in range(len(cities)):
-    #listcities = cities[cp].name
-    cities_list = [cities[0].name, cities[1].name, cities[2].name, cities[3].name, cities[4].name]
-    cities_temp_list = [cities[0]]
-    p = list(permutations(list(cities_list)))
-    print(p)
-# Route(p)
+        print(plist_Routes[min_perm_index])
 
-# except:
-# print("File is not available.")
+    except:
+        print("File is not available.")
